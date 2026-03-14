@@ -1,0 +1,153 @@
+@page "/managebooks"
+@layout Layout.AdminLayout
+@rendermode InteractiveServer
+
+<PageTitle>Manage Books - UniLibrary Admin</PageTitle>
+
+<div class="max-w-7xl mx-auto space-y-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="space-y-1">
+            <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">Inventory Overview</h3>
+            <p class="text-slate-500 text-sm">Manage and track the university's central library collection across all faculties.</p>
+        </div>
+        <a href="/bookform"
+           class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Add New Book
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Books</p>
+            <h4 class="text-2xl font-bold mt-1">@Books.Count</h4>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Copies</p>
+            <h4 class="text-2xl font-bold mt-1">@Books.Sum(b => b.Quantity)</h4>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Categories</p>
+            <h4 class="text-2xl font-bold mt-1">@Books.Select(b => b.Category).Distinct().Count()</h4>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Out of Stock</p>
+            <h4 class="text-2xl font-bold mt-1 text-rose-500">@Books.Count(b => b.Quantity == 0)</h4>
+        </div>
+    </div>
+
+    <!-- Book Table -->
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+        <div class="p-4 border-b border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="relative w-full md:w-96">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                <input @bind="SearchTerm" @bind:event="oninput" @onkeyup="FilterBooks"
+                       class="w-full pl-10 pr-4 py-2 rounded-lg bg-slate-50 border-none focus:ring-2 focus:ring-primary text-sm"
+                       placeholder="Search by title, author, or ISBN..." type="text" />
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50">
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Book Details</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Author</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Qty</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Added Date</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @if (FilteredBooks.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-slate-400">No books found.</td>
+                        </tr>
+                    }
+                    @foreach (var book in FilteredBooks)
+                    {
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="size-10 flex-shrink-0 bg-slate-100 rounded overflow-hidden">
+                                        <div class="w-full h-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center text-white">
+                                            <span class="material-symbols-outlined text-[16px]">book</span>
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-semibold text-sm truncate">@book.Title</p>
+                                        <p class="text-xs text-slate-500">ISBN: @book.ISBN</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-600">@book.Author</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary/10 text-primary">@book.Category</span>
+                            </td>
+                            <td class="px-6 py-4 text-center text-sm font-medium">@book.Quantity</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">@book.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="/bookform/@book.ID"
+                                       class="p-1.5 hover:bg-slate-100 rounded text-slate-400 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </a>
+                                    <button @onclick="() => DeleteBook(book.ID)"
+                                            class="p-1.5 hover:bg-slate-100 rounded text-slate-400 hover:text-rose-500 transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-4 border-t border-slate-200 flex items-center justify-between">
+            <p class="text-xs text-slate-500">Showing <span class="font-semibold">@FilteredBooks.Count</span> of <span class="font-semibold">@Books.Count</span> books</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private BookService BookService { get; set; } = null!;
+    [Inject] private NavigationManager Navigation { get; set; } = null!;
+
+    private List<Book> Books = new();
+    private List<Book> FilteredBooks = new();
+    private string SearchTerm = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Books = await BookService.GetAllBooksAsync();
+        FilteredBooks = Books;
+    }
+
+    private void FilterBooks()
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            FilteredBooks = Books;
+        }
+        else
+        {
+            var term = SearchTerm.ToLower();
+            FilteredBooks = Books.Where(b =>
+                b.Title.ToLower().Contains(term) ||
+                b.Author.ToLower().Contains(term) ||
+                b.ISBN.ToLower().Contains(term)
+            ).ToList();
+        }
+    }
+
+    private async Task DeleteBook(int id)
+    {
+        await BookService.DeleteBookAsync(id);
+        Books = await BookService.GetAllBooksAsync();
+        FilterBooks();
+    }
+}

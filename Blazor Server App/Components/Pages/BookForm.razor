@@ -1,0 +1,197 @@
+@page "/bookform"
+@page "/bookform/{BookId:int}"
+@layout Layout.AdminLayout
+@rendermode InteractiveServer
+
+<PageTitle>@(IsEdit ? "Edit Book" : "Add New Book") - UniLibrary Admin</PageTitle>
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-xl border border-primary/5 overflow-hidden">
+        <div class="p-8 border-b border-primary/5">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="material-symbols-outlined text-primary">edit_square</span>
+                <h1 class="text-2xl font-bold">@(IsEdit ? "Edit Book" : "Add New Book")</h1>
+            </div>
+            <p class="text-slate-500 text-sm">@(IsEdit ? "Update book information." : "Add a new book to the catalog for students and faculty.")</p>
+        </div>
+
+        <div class="p-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Book Title -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2 text-slate-700">Book Title</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">title</span>
+                        <input @bind="BookModel.Title"
+                               class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               placeholder="e.g. The Great Gatsby" type="text" />
+                    </div>
+                </div>
+
+                <!-- Author -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-700">Author</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">person</span>
+                        <input @bind="BookModel.Author"
+                               class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               placeholder="e.g. F. Scott Fitzgerald" type="text" />
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-700">Category</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">category</span>
+                        <select @bind="BookModel.Category"
+                                class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none">
+                            <option value="">Select Category</option>
+                            <option>Fiction</option>
+                            <option>Non-Fiction</option>
+                            <option>Science & Tech</option>
+                            <option>Computer Science</option>
+                            <option>Philosophy</option>
+                            <option>History</option>
+                            <option>Business</option>
+                            <option>Humanities</option>
+                            <option>Medicine</option>
+                            <option>Art & Design</option>
+                        </select>
+                        <span class="absolute right-3 top-3.5 material-symbols-outlined text-slate-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+
+                <!-- ISBN -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-700">ISBN</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">barcode</span>
+                        <input @bind="BookModel.ISBN"
+                               class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               placeholder="e.g. 978-3-16-148410-0" type="text" />
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-700">Quantity</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">inventory_2</span>
+                        <input @bind="BookModel.Quantity"
+                               class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                               min="1" placeholder="Number of copies" type="number" />
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-100">
+                    <span class="material-symbols-outlined text-red-600 text-sm">error</span>
+                    <p class="text-red-600 text-xs font-medium">@ErrorMessage</p>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(SuccessMessage))
+            {
+                <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-100">
+                    <span class="material-symbols-outlined text-green-600 text-sm">check_circle</span>
+                    <p class="text-green-600 text-xs font-medium">@SuccessMessage</p>
+                </div>
+            }
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row items-center gap-3 pt-6">
+                <button @onclick="HandleSave" disabled="@IsProcessing"
+                        class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 focus:ring-4 focus:ring-primary/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    @(IsProcessing ? "Saving..." : "Save Book")
+                </button>
+                <a href="/managebooks"
+                   class="w-full sm:w-auto px-8 py-3 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int? BookId { get; set; }
+    [Inject] private BookService BookService { get; set; } = null!;
+    [Inject] private NavigationManager Navigation { get; set; } = null!;
+
+    private Book BookModel = new();
+    private bool IsEdit => BookId.HasValue && BookId.Value > 0;
+    private bool IsProcessing = false;
+    private string? ErrorMessage;
+    private string? SuccessMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            var book = await BookService.GetBookByIdAsync(BookId!.Value);
+            if (book != null)
+                BookModel = book;
+            else
+                Navigation.NavigateTo("/managebooks");
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        ErrorMessage = null;
+        SuccessMessage = null;
+        IsProcessing = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(BookModel.Title) || string.IsNullOrWhiteSpace(BookModel.Author) ||
+                string.IsNullOrWhiteSpace(BookModel.ISBN) || string.IsNullOrWhiteSpace(BookModel.Category))
+            {
+                ErrorMessage = "Please fill in all required fields.";
+                return;
+            }
+
+            if (IsEdit)
+            {
+                var (success, message) = await BookService.UpdateBookAsync(BookModel);
+                if (success)
+                {
+                    SuccessMessage = message;
+                    await Task.Delay(1000);
+                    Navigation.NavigateTo("/managebooks");
+                }
+                else
+                {
+                    ErrorMessage = message;
+                }
+            }
+            else
+            {
+                var (success, message) = await BookService.AddBookAsync(BookModel);
+                if (success)
+                {
+                    SuccessMessage = message;
+                    await Task.Delay(1000);
+                    Navigation.NavigateTo("/managebooks");
+                }
+                else
+                {
+                    ErrorMessage = message;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "An error occurred. Please try again.";
+        }
+        finally
+        {
+            IsProcessing = false;
+        }
+    }
+}

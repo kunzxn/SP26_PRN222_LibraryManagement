@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6324eb",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#161121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white dark:bg-background-dark px-6 md:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl">auto_stories</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">UniLibrary</h2>
+</div>
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-primary text-sm font-semibold leading-normal border-b-2 border-primary pb-1" href="#">Browse</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">My Borrows</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Reservations</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Fines</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+<div class="text-slate-500 flex items-center justify-center pl-4">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent focus:ring-0 text-slate-900 dark:text-white placeholder:text-slate-500 text-sm" placeholder="Quick find..." value=""/>
+</div>
+</label>
+<button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" data-alt="Student profile avatar with purple accents" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjLfr4UHPkW5R9gk_qAsa548pLQY2vXh04TrxIYyqtjZXGkXBTr2Fp_TyDL-TsxZ6nnyBu70IfM1szseWN9hqZvSBI1W58iQY2y5-XUy6d6ub9Djvfyj1J4xWDc5QAe1zmYRBzttIG7sYOi2c8CZXmFyTsLCOER_dIiOoxXamhhKg0rhMz9CE4ebWItETwGhhNRU13-VDJgKQnTuFBVEya88SED_WRSNItuM0tZtpGJ-UEpxEZsssqzAywGToiskeODHvqNSKBZpg");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10">
+<!-- Hero/Search Section -->
+<div class="flex flex-col gap-6 mb-12">
+<div class="flex flex-col gap-2">
+<h1 class="text-slate-900 dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em]">Discover Knowledge</h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg font-normal">Search across 500,000+ academic books, journals, and digital resources.</p>
+</div>
+<!-- Search Filter Bar -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+<div class="md:col-span-5">
+<label class="flex flex-col gap-2">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Book Title or Keyword</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">menu_book</span>
+<input class="form-input flex w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary pl-10 h-12 text-slate-900 dark:text-white" placeholder="e.g. Quantum Physics, Marketing 101..."/>
+</div>
+</label>
+</div>
+<div class="md:col-span-3">
+<label class="flex flex-col gap-2">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Author</span>
+<select class="form-select flex w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary h-12 text-slate-900 dark:text-white">
+<option>All Authors</option>
+<option>Richard Feynman</option>
+<option>Philip Kotler</option>
+<option>Yuval Noah Harari</option>
+<option>Malcom Gladwell</option>
+</select>
+</label>
+</div>
+<div class="md:col-span-3">
+<label class="flex flex-col gap-2">
+<span class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Category</span>
+<select class="form-select flex w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary h-12 text-slate-900 dark:text-white">
+<option>All Categories</option>
+<option>Science &amp; Tech</option>
+<option>Business</option>
+<option>Humanities</option>
+<option>Medicine</option>
+<option>Art &amp; Design</option>
+</select>
+</label>
+</div>
+<div class="md:col-span-1">
+<button class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white hover:bg-primary/90 transition-all shadow-md shadow-primary/20">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Results Section -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold">Search Results (24)</h3>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500">Sort by:</span>
+<select class="bg-transparent border-none text-sm font-semibold text-primary focus:ring-0 py-0 pl-1">
+<option>Relevance</option>
+<option>Newest</option>
+<option>Popularity</option>
+</select>
+</div>
+</div>
+<!-- Results Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Book Card 1 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-primary/90 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">Science &amp; Tech</span>
+</div>
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">visibility</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="Cover of a science textbook with abstract geometric patterns" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFwoQ287y2zOsltrDx2OF9ACOe88e5LM9oBQ6BM3c70DwMDcw-PyVwb9f7oGAeLJAARbTvI0VkoRCKhrBDj85B7ryQJsIvWvdc0NK2ube7hItjDYBHF5w71_fYbwcB-o3Hn13gnW2m3hno4J8oypnFNt-1-50xEB_zNynwwDW9-PZUiUWehyhRK_bCgcXdZjTT9ZOs45pMOPlCM8QbePpQ-xtjqv4Yeb1cCN7XDb1iRVA0dTbxl577M_chPTQhseMiTYjtx5LmVx4"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1 group-hover:text-primary transition-colors">The Quantum Revolution</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Dr. Arthur Miller</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-green-600 dark:text-green-400">12 Copies</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold py-2 px-4 rounded-lg hover:scale-105 transition-transform">Borrow</button>
+</div>
+</div>
+</div>
+<!-- Book Card 2 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-primary/90 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">Business</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="Corporate strategy book cover with blue tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-zNlImRyKnkNGVST8AoSMWB089h6BDYWeIQhKbPpm4oZCI3qwvc4xRpuLq1-1IOKcM0JBnSxUXBi8VA9Zt-hLYGad0KUnov3vRt4CdWtHp5cnFl63v7jmfMJAvxOafJtVJbsRKsAeLQoMYMQnjTfb3x1QXk-PGhNCCbuuJ4dOUr6OVPMbEFB8ZIoC6QAc9vbkojMm2sfFiHrnsiQvHx2PGye2gKmFvxtyi6uC6tEmiyiHrOfJNQy4qs6CEY00p05oWo9s063DbK8"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1 group-hover:text-primary transition-colors">Strategic Marketing</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Philip Kotler</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-amber-600 dark:text-amber-400">2 Copies</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold py-2 px-4 rounded-lg hover:scale-105 transition-transform">Borrow</button>
+</div>
+</div>
+</div>
+<!-- Book Card 3 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-primary/90 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">Humanities</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="History book cover with old paper texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfvr-kuIAYUrZ7AHeE7pz9u9EyRt8VASQUEfrbnhtdtd9iUSOLOjZnlg-LWTtCjXibrfracjGMrQOq7lzUwznXNSg0DxPIHosWX0zFBpVQMVUOp_YE1xeqpSlm8ARoJjKsp9jI817PwZpmUpLWY4Gll3JH5rqajcg_iIXqdqw_PFZ402vdVFY1r9X-y8ot-czN2tqMQDUJN-oM-BNDdyL5yEFmbOkUuQL9H6XfDSfZ-gsnq1-4ci5ktKgaA1sWS1TuXBXQBNB9lbU"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1 group-hover:text-primary transition-colors">The Silk Roads</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Peter Frankopan</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-green-600 dark:text-green-400">8 Copies</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold py-2 px-4 rounded-lg hover:scale-105 transition-transform">Borrow</button>
+</div>
+</div>
+</div>
+<!-- Book Card 4 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col opacity-75">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden grayscale">
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<span class="bg-red-600 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full">Out of Stock</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="Literature classic book cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDveR3djxzlKBOumbyhDFLJKEZ3r8LSbU78Dz57Tv7ZPF3k3rOm6jGl7R2YkESJvrkOwCelhEaEOY3wjpc-woHrJS6G4wqvFAV8VoyRZcvsmtybLzeRUa68k8vGuxdQjizdRq3b0KgNTmvfjCTTerCdnlvFUUjA2GRaFy-2QZQqwDo6jAIfVvRqZlRPiZAgaTJd5KsTIEvKqDBy8fuh9s6etsYzZxppve6BfidAXK9LEblhW0Ba_b0SzHLAykUAOVrRmjvLeo32Krw"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1">Modern Literature</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Sarah Jenkins</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-red-600 dark:text-red-400">0 Copies</span>
+</div>
+<button class="bg-slate-200 dark:bg-slate-800 text-slate-500 text-xs font-bold py-2 px-4 rounded-lg cursor-not-allowed">Reserve</button>
+</div>
+</div>
+</div>
+<!-- Additional Cards for Grid filling -->
+<!-- Card 5 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-primary/90 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">Art &amp; Design</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="Design theory book with minimal cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2GsdHvRoJaxNmT1Q62qqdv5AnLO9IUb8rxM5_Ayyhk2fgj7o89uvVtt5b2J_rklS2D6J3szJB0fralZyEdEf-25_HlPm3D13NiAE4WbUJfRcbLwe-1ZYCmFajezdLrCbKRkiHRlngHgnRS9IOZWNdI6IuDOctCJd0qo1uXZDg8dtCXvWqT1xqbd8s9FoE6i9zOxoxyYg1H4Mjd9YmdvdGmrrWO9cL-QDhYt1G8KdJRqPfdRQ5Q5yN-W5w5fJLgEyeyeH2JuoOLpI"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1 group-hover:text-primary transition-colors">User Interface Design</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Leo Cooper</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-green-600 dark:text-green-400">5 Copies</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold py-2 px-4 rounded-lg hover:scale-105 transition-transform">Borrow</button>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+<div class="aspect-[3/4] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-primary/90 text-white text-[10px] uppercase font-bold px-2 py-1 rounded tracking-wider">Science &amp; Tech</span>
+</div>
+<img alt="Book cover" class="w-full h-full object-cover" data-alt="Artificial intelligence book with neon circuit art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlc15YCOthQeRzgQ3HfNlqxNnSv_DTogNP7mnHtBnrQvMBQUAEAMsnfkGG1pLPvcoPwWQcYAMsDWwuL92VzM1QRfBy96H-uwxaAHGVk-MqKUOH2pcA6xzcxHvNjKkZjWr7X-NbRZh8qD_ZLmOcNJltJpkKlah3-l0Zm-qFudxiapE_BdwOoqh9TOnyird0xVCjG7frtXV2fnZi8noI-tA9z5LY93CI-z2UpR7YUUjin9fh2ZZL427s7DMQsuesXmzBDr2KoMVD_o4"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex-1">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight mb-1 group-hover:text-primary transition-colors">AI &amp; Future Minds</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">James Sterling</p>
+</div>
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Available</span>
+<span class="text-sm font-semibold text-green-600 dark:text-green-400">24 Copies</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold py-2 px-4 rounded-lg hover:scale-105 transition-transform">Borrow</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center gap-2 mt-8 py-4">
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500">chevron_left</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold">1</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">2</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">3</button>
+<span class="text-slate-400 px-2">...</span>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">12</button>
+<button class="size-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-background-dark border-t border-primary/10 py-10 px-10">
+<div class="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-4 text-primary mb-6">
+<div class="size-6 flex items-center justify-center bg-primary/10 rounded">
+<span class="material-symbols-outlined text-primary text-lg">auto_stories</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-base font-bold">UniLibrary</h2>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400">The central digital hub for all university learning materials and research resources.</p>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Resources</h4>
+<ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">E-Books</a></li>
+<li><a class="hover:text-primary" href="#">Journal Archives</a></li>
+<li><a class="hover:text-primary" href="#">Research Papers</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Support</h4>
+<ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+<li><a class="hover:text-primary" href="#">Librarian Chat</a></li>
+<li><a class="hover:text-primary" href="#">Tutorials</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Mobile App</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Take the library anywhere with our mobile app.</p>
+<div class="flex gap-2">
+<div class="bg-slate-900 dark:bg-slate-800 px-3 py-1.5 rounded flex items-center gap-2 cursor-pointer border border-slate-700">
+<span class="material-symbols-outlined text-white text-xl">phone_iphone</span>
+<div class="flex flex-col">
+<span class="text-[8px] text-slate-400 leading-none">Download on</span>
+<span class="text-[10px] text-white font-bold leading-none">App Store</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto pt-8 mt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-slate-400">© 2024 University Library Services. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-xs text-slate-400 hover:text-primary" href="#">Privacy Policy</a>
+<a class="text-xs text-slate-400 hover:text-primary" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

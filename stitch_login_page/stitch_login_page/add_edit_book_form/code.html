@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Library Management - Book Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6324eb",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#161121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden font-display">
+<header class="flex items-center justify-between border-b border-primary/10 bg-white dark:bg-background-dark px-6 py-4 lg:px-20">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center size-10 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">library_books</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">University Library</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 flex items-center justify-center p-6 lg:p-12">
+<div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-primary/5 overflow-hidden">
+<div class="p-8 border-b border-primary/5">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+<h1 class="text-2xl font-bold">Book Details</h1>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Add a new book to the catalog or update existing information for students and faculty.</p>
+</div>
+<form class="p-8 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Book Title</label>
+<div class="relative">
+<span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">title</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. The Great Gatsby" type="text"/>
+</div>
+<p class="mt-1 text-xs text-red-500 hidden">Please enter a valid book title.</p>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Author</label>
+<div class="relative">
+<span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">person</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. F. Scott Fitzgerald" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Category</label>
+<div class="relative">
+<span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">category</span>
+<select class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none">
+<option value="">Select Category</option>
+<option>Fiction</option>
+<option>Non-Fiction</option>
+<option>Science &amp; Tech</option>
+<option>Philosophy</option>
+<option>History</option>
+</select>
+<span class="absolute right-3 top-3.5 material-symbols-outlined text-slate-400 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">ISBN</label>
+<div class="relative">
+<span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">barcode</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. 978-3-16-148410-0" type="text"/>
+</div>
+<p class="mt-1 text-xs text-red-500 hidden">ISBN must be 13 digits.</p>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Quantity</label>
+<div class="relative">
+<span class="absolute left-3 top-3.5 material-symbols-outlined text-slate-400 text-sm">inventory_2</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" min="1" placeholder="Number of copies" type="number"/>
+</div>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Brief Summary</label>
+<textarea class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all h-24 resize-none" placeholder="Provide a short description of the book..."></textarea>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-3 pt-6">
+<button class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 focus:ring-4 focus:ring-primary/30 transition-all flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined text-sm">save</span>
+                            Save Book
+                        </button>
+<button class="w-full sm:w-auto px-8 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-sm">close</span>
+                            Cancel
+                        </button>
+</div>
+</form>
+</div>
+</main>
+<nav class="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-3 rounded-full shadow-2xl border border-primary/10">
+<a class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="hidden md:inline text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white shadow-lg transition-all" href="#">
+<span class="material-symbols-outlined">book</span>
+<span class="hidden md:inline text-sm font-medium">Books</span>
+</a>
+<a class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="hidden md:inline text-sm font-medium">Members</span>
+</a>
+<div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+<a class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+</a>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,140 @@
+@page "/dashboard"
+@layout Layout.AdminLayout
+@rendermode InteractiveServer
+
+<PageTitle>Admin Dashboard - UniLibrary</PageTitle>
+
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-slate-900">Dashboard Overview</h2>
+    <p class="text-slate-500">Welcome back. Here is what's happening today.</p>
+</div>
+
+<!-- Widgets -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <div class="flex justify-between items-start mb-4">
+            <div class="p-2 bg-primary/10 text-primary rounded-lg">
+                <span class="material-symbols-outlined">menu_book</span>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Total Books</p>
+        <h3 class="text-2xl font-bold mt-1">@TotalBooks</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <div class="flex justify-between items-start mb-4">
+            <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                <span class="material-symbols-outlined">group</span>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Total Students</p>
+        <h3 class="text-2xl font-bold mt-1">@TotalStudents</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <div class="flex justify-between items-start mb-4">
+            <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                <span class="material-symbols-outlined">bookmark_added</span>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Borrowed Books</p>
+        <h3 class="text-2xl font-bold mt-1">@BorrowedCount</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <div class="flex justify-between items-start mb-4">
+            <div class="p-2 bg-red-100 text-red-600 rounded-lg">
+                <span class="material-symbols-outlined">running_with_errors</span>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Overdue Books</p>
+        <h3 class="text-2xl font-bold mt-1">@OverdueCount</h3>
+    </div>
+</div>
+
+<!-- Recent Activity Table -->
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-lg text-slate-900">Recent Borrow Activity</h3>
+        <a href="/borrowrecords" class="text-primary text-sm font-semibold hover:underline">View All Records</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                    <th class="px-6 py-4 font-semibold">Student Name</th>
+                    <th class="px-6 py-4 font-semibold">Book Title</th>
+                    <th class="px-6 py-4 font-semibold">Borrow Date</th>
+                    <th class="px-6 py-4 font-semibold">Due Date</th>
+                    <th class="px-6 py-4 font-semibold">Returned Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                @if (RecentRecords.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-slate-400">No borrow records found.</td>
+                    </tr>
+                }
+                @foreach (var record in RecentRecords.Take(5))
+                {
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                                    @GetInitials(record.User?.FullName ?? "?")
+                                </div>
+                                <span class="text-sm font-medium">@(record.User?.FullName ?? "Unknown")</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">@(record.Book?.Title ?? "Unknown")</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">@record.BorrowDate.ToString("yyyy-MM-dd")</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">@record.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td class="px-6 py-4">
+                            @if (record.Returned)
+                            {
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">Returned</span>
+                            }
+                            else if (record.DueDate < DateTime.Now)
+                            {
+                                <span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold">Overdue</span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Pending</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="px-6 py-4 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500">
+        <span>Showing @Math.Min(5, RecentRecords.Count) of @RecentRecords.Count records</span>
+    </div>
+</div>
+
+@code {
+    [Inject] private BookService BookService { get; set; } = null!;
+    [Inject] private BorrowService BorrowService { get; set; } = null!;
+
+    private int TotalBooks;
+    private int TotalStudents = 0;
+    private int BorrowedCount;
+    private int OverdueCount;
+    private List<BorrowRecord> RecentRecords = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var books = await BookService.GetAllBooksAsync();
+        TotalBooks = books.Count;
+        BorrowedCount = await BorrowService.GetActiveBorrowCountAsync();
+        OverdueCount = await BorrowService.GetOverdueCountAsync();
+        RecentRecords = await BorrowService.GetAllRecordsAsync();
+    }
+
+    private string GetInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return parts.Length > 0 ? parts[0][0].ToString().ToUpper() : "?";
+    }
+}

@@ -1,0 +1,99 @@
+@page "/myborrows"
+@layout Layout.MainLayout
+@rendermode InteractiveServer
+
+<PageTitle>My Borrows - UniLibrary</PageTitle>
+
+<div class="flex flex-col gap-6 mb-12">
+    <div class="flex flex-col gap-2">
+        <h1 class="text-slate-900 text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em]">My Borrows</h1>
+        <p class="text-slate-600 text-lg font-normal">View and manage the books you have borrowed.</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                    <th class="py-4 px-6 text-sm font-semibold text-slate-700">Book</th>
+                    <th class="py-4 px-6 text-sm font-semibold text-slate-700">Borrow Date</th>
+                    <th class="py-4 px-6 text-sm font-semibold text-slate-700">Due Date</th>
+                    <th class="py-4 px-6 text-sm font-semibold text-slate-700">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Records == null)
+                {
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-slate-500">Loading your records...</td>
+                    </tr>
+                }
+                else if (!Records.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-slate-500">You haven't borrowed any books yet. <a href="/booksearch" class="text-primary hover:underline">Browse books</a></td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var record in Records)
+                    {
+                        var isOverdue = !record.Returned && record.DueDate.Date < DateTime.Now.Date;
+                        <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4 px-6">
+                                <p class="text-sm font-bold text-slate-900">@(record.Book?.Title ?? "Unknown Book")</p>
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="text-sm text-slate-600">@record.BorrowDate.ToString("MMM dd, yyyy")</span>
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="text-sm text-slate-600 @(isOverdue ? "text-red-500 font-semibold" : "")">
+                                    @record.DueDate.ToString("MMM dd, yyyy")
+                                </span>
+                            </td>
+                            <td class="py-4 px-6">
+                                @if (record.Returned)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-green-50 text-green-700 text-xs font-semibold border border-green-200">
+                                        <span class="size-1.5 rounded-full bg-green-500"></span>
+                                        Returned
+                                    </span>
+                                }
+                                else if (isOverdue)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-red-50 text-red-700 text-xs font-semibold border border-red-200">
+                                        <span class="size-1.5 rounded-full bg-red-500"></span>
+                                        Overdue
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
+                                        <span class="size-1.5 rounded-full bg-blue-500"></span>
+                                        Active
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Inject] private BorrowService BorrowService { get; set; } = null!;
+    [Inject] private Blazor_Server_App.Services.UserSession UserSession { get; set; } = null!;
+
+    private List<GalleryBusiness.Entities.BorrowRecord>? Records;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UserSession.IsLoggedIn)
+        {
+            Records = await BorrowService.GetUserRecordsAsync(UserSession.UserId);
+        }
+    }
+}

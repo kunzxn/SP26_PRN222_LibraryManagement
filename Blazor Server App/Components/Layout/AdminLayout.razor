@@ -1,0 +1,72 @@
+@inherits LayoutComponentBase
+
+<div class="flex h-screen overflow-hidden">
+    <Sidebar ActivePage="@ActivePage" />
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Admin Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="relative w-full max-w-md">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+                    <input class="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm"
+                           placeholder="Search books, students or records..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg relative">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-sm font-semibold leading-none">@UserSession.FullName</p>
+                        <p class="text-xs text-slate-500">@UserSession.Role</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                        @(UserSession.FullName.Length > 0 ? UserSession.FullName[0] : 'A')
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-8 bg-background-light">
+            @Body
+        </div>
+    </main>
+</div>
+
+@code {
+    [Inject] private UserSession UserSession { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
+    private string ActivePage = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && (!UserSession.IsLoggedIn || UserSession.Role != "Admin"))
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+        await Task.CompletedTask;
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Determine active page from the current URL
+        var uri = new Uri(NavigationManager.Uri);
+        var path = uri.AbsolutePath.TrimStart('/').ToLower();
+        ActivePage = path switch
+        {
+            "dashboard" => "Dashboard",
+            "managebooks" => "ManageBooks",
+            "borrowrecords" => "BorrowRecords",
+            "bookform" or "bookform/*" => "ManageBooks",
+            _ => ""
+        };
+    }
+}

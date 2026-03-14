@@ -1,0 +1,31 @@
+@* Student Navigation Bar *@
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white px-6 md:px-10 py-3 sticky top-0 z-50">
+    <div class="flex items-center gap-8">
+        <div class="flex items-center gap-4 text-primary">
+            <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+                <span class="material-symbols-outlined text-primary text-2xl">auto_stories</span>
+            </div>
+            <h2 class="text-slate-900 text-lg font-bold leading-tight tracking-[-0.015em]">UniLibrary</h2>
+        </div>
+        <nav class="hidden md:flex items-center gap-9">
+            <a class="@(ActivePage == "Browse" ? "text-primary text-sm font-semibold leading-normal border-b-2 border-primary pb-1" : "text-slate-600 text-sm font-medium leading-normal hover:text-primary transition-colors")"
+               href="/booksearch">Browse</a>
+            <a class="@(ActivePage == "MyBorrows" ? "text-primary text-sm font-semibold leading-normal border-b-2 border-primary pb-1" : "text-slate-600 text-sm font-medium leading-normal hover:text-primary transition-colors")"
+               href="/myborrows">My Borrows</a>
+        </nav>
+    </div>
+    <div class="flex flex-1 justify-end gap-4 items-center">
+        <button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
+            <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <a href="/logout" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+            <span class="hidden md:inline">Logout</span>
+        </a>
+    </div>
+</header>
+
+@code {
+    [Parameter] public string ActivePage { get; set; } = "";
+    [Inject] private Blazor_Server_App.Services.UserSession UserSession { get; set; } = null!;
+}

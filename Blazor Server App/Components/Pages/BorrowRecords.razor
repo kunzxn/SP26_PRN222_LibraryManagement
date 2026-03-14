@@ -1,0 +1,205 @@
+@page "/borrowrecords"
+@layout Layout.AdminLayout
+@rendermode InteractiveServer
+
+<PageTitle>Borrow Records - UniLibrary Admin</PageTitle>
+
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Borrow Records</h2>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="flex flex-wrap gap-4 items-end">
+        <div class="flex-1 min-w-[240px]">
+            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">Search Students or Books</label>
+            <div class="relative group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+                <input @bind="SearchTerm" @bind:event="oninput" @onkeyup="FilterRecords"
+                       class="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                       placeholder="Search by name or title..." type="text" />
+            </div>
+        </div>
+        <div class="w-48">
+            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">Returned Status</label>
+            <select @bind="StatusFilter" @bind:after="FilterRecords"
+                    class="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                <option value="All">All Statuses</option>
+                <option value="Returned">Returned</option>
+                <option value="Borrowed">Borrowed</option>
+                <option value="Overdue">Overdue</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Loans</p>
+            <h3 class="text-2xl font-bold mt-1">@ActiveLoans</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overdue</p>
+            <h3 class="text-2xl font-bold mt-1 text-rose-500">@OverdueCount</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Returned</p>
+            <h3 class="text-2xl font-bold mt-1">@ReturnedCount</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Records</p>
+            <h3 class="text-2xl font-bold mt-1">@AllRecords.Count</h3>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Student Name</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Book Title</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Borrow Date</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                @if (FilteredRecords.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">No records found.</td>
+                    </tr>
+                }
+                @foreach (var record in FilteredRecords)
+                {
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                    @GetInitials(record.User?.FullName ?? "?")
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold">@(record.User?.FullName ?? "Unknown")</p>
+                                    <p class="text-[10px] text-slate-500">ID: #@record.UserID</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm font-medium">@(record.Book?.Title ?? "Unknown")</p>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">@record.BorrowDate.ToString("MMM dd, yyyy")</td>
+                        <td class="px-6 py-4 text-sm @(GetStatus(record) == "Overdue" ? "text-rose-500 font-semibold" : "text-slate-600")">
+                            @record.DueDate.ToString("MMM dd, yyyy")
+                        </td>
+                        <td class="px-6 py-4">
+                            @{
+                                var status = GetStatus(record);
+                            }
+                            @if (status == "Returned")
+                            {
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Returned</span>
+                            }
+                            else if (status == "Overdue")
+                            {
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">Overdue</span>
+                            }
+                            else
+                            {
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Borrowed</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            @if (!record.Returned)
+                            {
+                                <button @onclick="() => MarkReturned(record.ID)"
+                                        class="text-xs font-semibold text-primary hover:underline">
+                                    Mark Returned
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+            <p class="text-xs text-slate-500 font-medium">Showing @FilteredRecords.Count of @AllRecords.Count results</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private BorrowService BorrowService { get; set; } = null!;
+
+    private List<BorrowRecord> AllRecords = new();
+    private List<BorrowRecord> FilteredRecords = new();
+    private string SearchTerm = "";
+    private string StatusFilter = "All";
+    private int ActiveLoans;
+    private int OverdueCount;
+    private int ReturnedCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        AllRecords = await BorrowService.GetAllRecordsAsync();
+        ActiveLoans = AllRecords.Count(r => !r.Returned);
+        OverdueCount = AllRecords.Count(r => !r.Returned && r.DueDate < DateTime.Now);
+        ReturnedCount = AllRecords.Count(r => r.Returned);
+        FilterRecords();
+    }
+
+    private void FilterRecords()
+    {
+        var records = AllRecords.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            var term = SearchTerm.ToLower();
+            records = records.Where(r =>
+                (r.User?.FullName?.ToLower().Contains(term) ?? false) ||
+                (r.Book?.Title?.ToLower().Contains(term) ?? false)
+            );
+        }
+
+        if (StatusFilter != "All")
+        {
+            records = StatusFilter switch
+            {
+                "Returned" => records.Where(r => r.Returned),
+                "Borrowed" => records.Where(r => !r.Returned && r.DueDate >= DateTime.Now),
+                "Overdue" => records.Where(r => !r.Returned && r.DueDate < DateTime.Now),
+                _ => records
+            };
+        }
+
+        FilteredRecords = records.ToList();
+    }
+
+    private async Task MarkReturned(int id)
+    {
+        await BorrowService.ReturnBookAsync(id);
+        await LoadData();
+    }
+
+    private string GetStatus(BorrowRecord record)
+    {
+        if (record.Returned) return "Returned";
+        if (record.DueDate < DateTime.Now) return "Overdue";
+        return "Borrowed";
+    }
+
+    private string GetInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2) return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return parts.Length > 0 ? parts[0][0].ToString().ToUpper() : "?";
+    }
+}

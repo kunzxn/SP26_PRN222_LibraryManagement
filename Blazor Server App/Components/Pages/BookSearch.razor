@@ -1,0 +1,138 @@
+@page "/booksearch"
+@layout Layout.MainLayout
+@rendermode InteractiveServer
+
+<PageTitle>Browse Books - UniLibrary</PageTitle>
+
+<!-- Hero/Search Section -->
+<div class="flex flex-col gap-6 mb-12">
+    <div class="flex flex-col gap-2">
+        <h1 class="text-slate-900 text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em]">Discover Knowledge</h1>
+        <p class="text-slate-600 text-lg font-normal">Search across our academic books, journals, and digital resources.</p>
+    </div>
+
+    <!-- Search Filter Bar -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div class="md:col-span-5">
+                <label class="flex flex-col gap-2">
+                    <span class="text-slate-700 text-sm font-semibold">Book Title or Keyword</span>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">menu_book</span>
+                        <input @bind="SearchTitle" @bind:event="oninput"
+                               class="form-input flex w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary pl-10 h-12 text-slate-900"
+                               placeholder="e.g. Quantum Physics, Marketing 101..." />
+                    </div>
+                </label>
+            </div>
+            <div class="md:col-span-3">
+                <label class="flex flex-col gap-2">
+                    <span class="text-slate-700 text-sm font-semibold">Author</span>
+                    <input @bind="SearchAuthor" @bind:event="oninput"
+                           class="form-input flex w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary h-12 text-slate-900"
+                           placeholder="Author name..." />
+                </label>
+            </div>
+            <div class="md:col-span-3">
+                <label class="flex flex-col gap-2">
+                    <span class="text-slate-700 text-sm font-semibold">Category</span>
+                    <select @bind="SearchCategory"
+                            class="form-select flex w-full rounded-lg border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary h-12 text-slate-900">
+                        <option>All Categories</option>
+                        @foreach (var cat in Categories)
+                        {
+                            <option>@cat</option>
+                        }
+                    </select>
+                </label>
+            </div>
+            <div class="md:col-span-1">
+                <button @onclick="SearchBooks"
+                        class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white hover:bg-primary/90 transition-all shadow-md shadow-primary/20">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="flex flex-col gap-6">
+    <div class="flex items-center justify-between">
+        <h3 class="text-slate-900 text-xl font-bold">Search Results (@Books.Count)</h3>
+    </div>
+
+    @if (Books.Count == 0)
+    {
+        <div class="text-center py-20">
+            <span class="material-symbols-outlined text-slate-300 text-6xl mb-4">search_off</span>
+            <p class="text-slate-500 text-lg">No books found. Try adjusting your search criteria.</p>
+        </div>
+    }
+    else
+    {
+        <!-- Results Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach (var book in Books)
+            {
+                <BookCard BookData="book" OnBorrow="OpenBorrowModal" />
+            }
+        </div>
+    }
+</div>
+
+<!-- Borrow Modal -->
+<BorrowModal IsVisible="ShowModal" SelectedBook="SelectedBook" OnClose="CloseBorrowModal" OnConfirm="ConfirmBorrow" />
+
+@code {
+    [Inject] private BookService BookService { get; set; } = null!;
+    [Inject] private BorrowService BorrowService { get; set; } = null!;
+    [Inject] private Blazor_Server_App.Services.UserSession UserSession { get; set; } = null!;
+
+    private List<Book> Books = new();
+    private List<string> Categories = new();
+    private string SearchTitle = "";
+    private string SearchAuthor = "";
+    private string SearchCategory = "All Categories";
+    private bool ShowModal = false;
+    private Book? SelectedBook;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allBooks = await BookService.GetAllBooksAsync();
+        Books = allBooks;
+        Categories = allBooks.Select(b => b.Category).Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().OrderBy(c => c).ToList();
+    }
+
+    private async Task SearchBooks()
+    {
+        Books = await BookService.SearchBooksAsync(
+            string.IsNullOrWhiteSpace(SearchTitle) ? null : SearchTitle,
+            string.IsNullOrWhiteSpace(SearchAuthor) ? null : SearchAuthor,
+            SearchCategory == "All Categories" ? null : SearchCategory
+        );
+    }
+
+    private void OpenBorrowModal(Book book)
+    {
+        SelectedBook = book;
+        ShowModal = true;
+    }
+
+    private void CloseBorrowModal()
+    {
+        ShowModal = false;
+        SelectedBook = null;
+    }
+
+    private async Task ConfirmBorrow(Book book)
+    {
+        var (success, message) = await BorrowService.BorrowBookAsync(UserSession.UserId, book.ID);
+        if (success)
+        {
+            ShowModal = false;
+            SelectedBook = null;
+            Books = await BookService.GetAllBooksAsync();
+        }
+    }
+}

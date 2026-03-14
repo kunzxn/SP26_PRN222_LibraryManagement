@@ -1,0 +1,23 @@
+@page "/logout"
+@rendermode InteractiveServer
+@inject Blazor_Server_App.Services.UserSession UserSession
+@inject NavigationManager NavigationManager
+
+<!-- Add a temporary visual indicator so the user sees something before the redirect fires -->
+<div class="flex items-center justify-center min-h-screen bg-slate-50">
+    <div class="text-center">
+        <span class="material-symbols-outlined text-primary text-4xl animate-spin mb-4">refresh</span>
+        <h2 class="text-lg font-semibold text-slate-700">Logging out...</h2>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            UserSession.Logout();
+            NavigationManager.NavigateTo("/login", true);
+        }
+    }
+}
